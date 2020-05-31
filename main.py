@@ -14,6 +14,7 @@ import config
 
 pd.set_option('display.max_colwidth', 150)
 
+
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(client_secret_file, api_name, api_version, scopes, sep='-')
     CLIENT_SECRET_FILE = client_secret_file
@@ -51,7 +52,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
         return None
 
 
-def update(album_name):
+def update(albumname):
     CLIENT_SECRET_FILE = 'credentials.json'
     API_NAME = 'photoslibrary'
     API_VERSION = 'v1'
@@ -62,7 +63,7 @@ def update(album_name):
     myAblums = service.albums().list().execute()
     myAblums_list = myAblums.get('albums')
     dfAlbums = pd.DataFrame(myAblums_list)
-    travel_album_id = dfAlbums[dfAlbums['title'] == album_name]['id'].to_string(index=False).strip()
+    travel_album_id = dfAlbums[dfAlbums['title'] == albumname]['id'].to_string(index=False).strip()
 
     response = service.mediaItems().search(body={"albumId": travel_album_id, "pageSize": 25}).execute()
 
@@ -80,11 +81,13 @@ def update(album_name):
         nextPageToken = response.get('nextPageToken')
     return lst_medias
 
+
 # User custom field
 update_flag = config.user_config["update_flag"]
 file_type = config.user_config["file_type"]
 number_of_files = config.user_config["number_of_files"]
 album_name = config.user_config["album_name"]
+
 if file_type == "both":
     file_type = ""
 
