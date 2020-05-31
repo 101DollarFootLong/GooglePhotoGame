@@ -18,3 +18,6 @@ scratch.ipynb
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/GooglePhotoGame.iml
 .token_photoslibrary_v1.pickle
+__pycache__/googlephotoUI.cpython-36.pyc
+__pycache__/credentials.cpython-37.pyc
+config.py

@@ -83,40 +83,54 @@ def update(albumname):
 
 
 # User custom field
-update_flag = config.user_config["update_flag"]
-file_type = config.user_config["file_type"]
-number_of_files = config.user_config["number_of_files"]
+# update_flag = config.user_config["update_flag"]
+# file_type = config.user_config["file_type"]
+# number_of_files = config.user_config["number_of_files"]
 album_name = config.user_config["album_name"]
 
-if file_type == "both":
-    file_type = ""
 
-if update_flag:
-    lst_medias = update(album_name)
-    df_media_items = pd.DataFrame(lst_medias)
-    df_media_items.to_csv(f"DienNa_photos_metadata.csv")
-else:
-    df_media_items = pd.read_csv('DienNa_photos_metadata.csv')
+def photo_fetch(_file_type, _number_of_files, _album_name, _update_flag):
+    if _file_type == "both":
+        _file_type = ""
 
-df_media_items = df_media_items.sample(frac=1).reset_index(drop=True)
-
-df_media_items = df_media_items[df_media_items.mimeType.str.contains(file_type)].reset_index()
-
-driver = webdriver.Chrome(executable_path="./chromedriver")
-
-username, password = password_decoder()
-
-for x in range(number_of_files):
-    url = df_media_items.loc[x].productUrl
-    if x == 0:
-        driver.get(url)
-        inputElement = driver.find_element_by_xpath('//*[@id="identifierId"]')
-        inputElement.send_keys(username)
-        inputElement.send_keys(Keys.ENTER)
-        time.sleep(1)
-        passwordElement = driver.find_element_by_xpath('//*[@id="password"]/div[1]/div/div[1]/input')
-        passwordElement.send_keys(password)
-        passwordElement.send_keys(Keys.ENTER)
-        time.sleep(2)
+    if _update_flag:
+        lst_medias = update(_album_name)
+        df_media_items = pd.DataFrame(lst_medias)
+        df_media_items.to_csv(f"DienNa_photos_metadata.csv")
     else:
-        driver.execute_script("window.open('" + url + "')")
+        df_media_items = pd.read_csv('DienNa_photos_metadata.csv')
+
+    df_media_items = df_media_items.sample(frac=1).reset_index(drop=True)
+
+    df_media_items = df_media_items[df_media_items.mimeType.str.contains(_file_type)].reset_index()
+
+    driver = webdriver.Chrome(executable_path="./chromedriver")
+
+    username, password = password_decoder()
+
+    for x in range(_number_of_files):
+        url = df_media_items.loc[x].productUrl
+        if x == 0:
+            driver.get(url)
+            inputElement = driver.find_element_by_xpath('//*[@id="identifierId"]')
+            inputElement.send_keys(username)
+            inputElement.send_keys(Keys.ENTER)
+            time.sleep(1)
+            passwordElement = driver.find_element_by_xpath('//*[@id="password"]/div[1]/div/div[1]/input')
+            passwordElement.send_keys(password)
+            passwordElement.send_keys(Keys.ENTER)
+            time.sleep(1)
+        else:
+            driver.execute_script("window.open('" + url + "')")
+
+
+# if __name__ == "__main__":
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = googlephotoUI.Ui_MainWindow()
+#     ui.setupUi(MainWindow)
+#     file_type, number_of_files, update_flag = ui.pressed()
+#     MainWindow.show()
+#     print(file_type)
+#     #photo_fetch(file_type, number_of_files, album_name, update_flag)
+#     sys.exit(app.exec_())
