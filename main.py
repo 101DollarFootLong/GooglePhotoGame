@@ -51,7 +51,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
         return None
 
 
-def update():
+def update(album_name):
     CLIENT_SECRET_FILE = 'credentials.json'
     API_NAME = 'photoslibrary'
     API_VERSION = 'v1'
@@ -62,7 +62,6 @@ def update():
     myAblums = service.albums().list().execute()
     myAblums_list = myAblums.get('albums')
     dfAlbums = pd.DataFrame(myAblums_list)
-    album_name = "Điên Nà?"
     travel_album_id = dfAlbums[dfAlbums['title'] == album_name]['id'].to_string(index=False).strip()
 
     response = service.mediaItems().search(body={"albumId": travel_album_id, "pageSize": 25}).execute()
@@ -85,11 +84,12 @@ def update():
 update_flag = config.user_config["update_flag"]
 file_type = config.user_config["file_type"]
 number_of_files = config.user_config["number_of_files"]
+album_name = config.user_config["album_name"]
 if file_type == "both":
     file_type = ""
 
 if update_flag:
-    lst_medias = update()
+    lst_medias = update(album_name)
     df_media_items = pd.DataFrame(lst_medias)
     df_media_items.to_csv(f"DienNa_photos_metadata.csv")
 else:
