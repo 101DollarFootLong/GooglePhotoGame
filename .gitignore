@@ -1,0 +1,15 @@
+
+.DS_Store
+.vscode/settings.json
+__pycache__/config.cpython-36.pyc
+__pycache__/credentials.cpython-36.pyc
+credentials.json
+credentials.py
+DienNa_photos_metadata.csv
+note.txt
+Photos/.DS_Store
+Photos/2019-04-13IMG_3959.JPG
+Photos/2019-08-31IMG_5817.PNG
+Photos/2019-09-12IMG_5976.PNG
+scratch.ipynb
+token_photoslibrary_v1.pickle
