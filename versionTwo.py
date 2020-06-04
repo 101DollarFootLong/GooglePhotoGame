@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'googlephotoUIv2.ui'
-#
-# Created by: PyQt5 UI code generator 5.14.2
-#
-# WARNING! All changes made in this file will be lost!
-
 import sys
 from selenium import webdriver
 import time
@@ -18,11 +12,10 @@ from credentials import password_decoder
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
-import ast
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 pd.set_option('display.max_colwidth', 150)
-from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(client_secret_file, api_name, api_version, scopes, sep='-')
@@ -94,50 +87,54 @@ def update(album_name):
 
         nextPageToken = response.get('nextPageToken')
     return lst_medias
+
+
 class Ui_MainWindow(object):
-    def __init__(self):
-        self._file_type = "both"
-        self._number_of_files = 5
-        self._album_name = "Điên Nà?"
-        self._update_flag = False
-        self._driver = initalLogin()
-        self._date_list = []
+    def __init__(self, _file_type=None, _number_of_files=None, _album_name=None, _update_flag=None, _driver=None):
+        if _file_type is None:
+            self._file_type = "both"
+        if _number_of_files is None:
+            self._number_of_files = 5
+        if _album_name is None:
+            self._album_name = "Điên Nà?"
+        if _update_flag is None:
+            self._update_flag = False
+        if _driver is None:
+            self._driver = initalLogin()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(391, 222)
-        MainWindow.setDocumentMode(False)
-        MainWindow.setDockNestingEnabled(True)
+        MainWindow.resize(399, 255)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.PhotoType = QtWidgets.QComboBox(self.centralwidget)
-        self.PhotoType.setGeometry(QtCore.QRect(20, 70, 91, 41))
+        self.PhotoType.setGeometry(QtCore.QRect(30, 90, 91, 41))
         self.PhotoType.setObjectName("PhotoType")
         self.PhotoType.addItem("")
         self.PhotoType.addItem("")
         self.PhotoType.addItem("")
-        self.GenerateButton = QtWidgets.QPushButton(self.centralwidget)
-        self.GenerateButton.setGeometry(QtCore.QRect(280, 130, 91, 41))
-        self.GenerateButton.setObjectName("GenerateButton")
+        self.SubmitButton = QtWidgets.QPushButton(self.centralwidget)
+        self.SubmitButton.setGeometry(QtCore.QRect(90, 150, 211, 61))
+        self.SubmitButton.setObjectName("SubmitButton")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(30, 60, 71, 21))
+        self.label.setGeometry(QtCore.QRect(30, 70, 111, 21))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(160, 60, 101, 20))
+        self.label_2.setGeometry(QtCore.QRect(150, 70, 131, 20))
         self.label_2.setObjectName("label_2")
         self.UpdateAlbum = QtWidgets.QComboBox(self.centralwidget)
-        self.UpdateAlbum.setGeometry(QtCore.QRect(280, 60, 91, 61))
+        self.UpdateAlbum.setGeometry(QtCore.QRect(280, 80, 91, 61))
         self.UpdateAlbum.setObjectName("UpdateAlbum")
         self.UpdateAlbum.addItem("")
         self.UpdateAlbum.addItem("")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(280, 60, 91, 16))
+        self.label_3.setGeometry(QtCore.QRect(280, 70, 91, 16))
         self.label_3.setObjectName("label_3")
         self.PhotoNumber = QtWidgets.QComboBox(self.centralwidget)
-        self.PhotoNumber.setGeometry(QtCore.QRect(160, 70, 91, 41))
+        self.PhotoNumber.setGeometry(QtCore.QRect(150, 90, 91, 41))
         self.PhotoNumber.setObjectName("PhotoNumber")
         self.PhotoNumber.addItem("")
         self.PhotoNumber.addItem("")
@@ -161,70 +158,17 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
-        self.PlayerOneDateGuess = QtWidgets.QDateEdit(self.centralwidget)
-        self.PlayerOneDateGuess.setGeometry(QtCore.QRect(20, 220, 111, 24))
-        self.PlayerOneDateGuess.setObjectName("PlayerOneDateGuess")
-        self.PlayerTwoDateGuess = QtWidgets.QDateEdit(self.centralwidget)
-        self.PlayerTwoDateGuess.setGeometry(QtCore.QRect(150, 220, 111, 24))
-        self.PlayerTwoDateGuess.setObjectName("PlayerTwoDateGuess")
-        self.PlayerTwoDateGuess.setDateTime(QtCore.QDateTime(QtCore.QDate(2000, 1, 1), QtCore.QTime(0, 0, 0)))
-        self.PlayOneLabel = QtWidgets.QLabel(self.centralwidget)
-        self.PlayOneLabel.setGeometry(QtCore.QRect(20, 190, 71, 21))
-        self.PlayOneLabel.setObjectName("PlayOneLabel")
-        self.PhotoDateList = QtWidgets.QComboBox(self.centralwidget)
-        self.PhotoDateList.setGeometry(QtCore.QRect(270, 220, 104, 26))
-        self.PhotoDateList.setObjectName("PhotoDateList")
-        self.PhotoDateLabel = QtWidgets.QLabel(self.centralwidget)
-        self.PhotoDateLabel.setGeometry(QtCore.QRect(280, 190, 71, 21))
-        self.PhotoDateLabel.setObjectName("PhotoDateLabel")
-        self.PlayerOneName = QtWidgets.QLineEdit(self.centralwidget)
-        self.PlayerOneName.setGeometry(QtCore.QRect(20, 140, 121, 21))
-        self.PlayerOneName.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.PlayerOneName.setAlignment(QtCore.Qt.AlignCenter)
-        self.PlayerOneName.setObjectName("PlayerOneName")
-        self.label_4 = QtWidgets.QLabel(self.centralwidget)
-        self.label_4.setGeometry(QtCore.QRect(30, 120, 111, 20))
-        self.label_4.setObjectName("label_4")
-        self.PlayerTwoName = QtWidgets.QLineEdit(self.centralwidget)
-        self.PlayerTwoName.setGeometry(QtCore.QRect(150, 140, 121, 21))
-        self.PlayerTwoName.setText("")
-        self.PlayerTwoName.setAlignment(QtCore.Qt.AlignCenter)
-        self.PlayerTwoName.setObjectName("PlayerTwoName")
-        self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(160, 120, 111, 20))
-        self.label_6.setObjectName("label_6")
-        self.PlayerOneSpinBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.PlayerOneSpinBox.setGeometry(QtCore.QRect(90, 190, 41, 20))
-        self.PlayerOneSpinBox.setObjectName("PlayerOneSpinBox")
-        self.PlayerTwoSpinBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.PlayerTwoSpinBox.setGeometry(QtCore.QRect(220, 190, 41, 20))
-        self.PlayerTwoSpinBox.setObjectName("PlayerTwoSpinBox")
-        self.PlayerTwoLabel = QtWidgets.QLabel(self.centralwidget)
-        self.PlayerTwoLabel.setGeometry(QtCore.QRect(150, 190, 71, 21))
-        self.PlayerTwoLabel.setObjectName("PlayerTwoLabel")
-        self.CalculateButton = QtWidgets.QPushButton(self.centralwidget)
-        self.CalculateButton.setGeometry(QtCore.QRect(160, 260, 91, 41))
-        self.CalculateButton.setObjectName("CalculateButton")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 391, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 399, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.PlayOneLabel.hide()
-        self.PlayerTwoLabel.hide()
-        self.PlayerOneSpinBox.hide()
-        self.PlayerTwoSpinBox.hide()
-        self.PlayerOneDateGuess.hide()
-        self.PlayerTwoDateGuess.hide()
-        self.PhotoDateLabel.hide()
-        self.PhotoDateList.hide()
-        self.CalculateButton.hide()
-
-        self.GenerateButton.clicked.connect(self.pressed)
+        self.SubmitButton.clicked.connect(self.pressed)
+        self.infolist = []
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -234,12 +178,12 @@ class Ui_MainWindow(object):
         self.PhotoType.setItemText(0, _translate("MainWindow", "Both"))
         self.PhotoType.setItemText(1, _translate("MainWindow", "Videos"))
         self.PhotoType.setItemText(2, _translate("MainWindow", "Images"))
-        self.GenerateButton.setText(_translate("MainWindow", "Generate"))
-        self.label.setText(_translate("MainWindow", "Photo Type"))
-        self.label_2.setText(_translate("MainWindow", "Photos Number"))
+        self.SubmitButton.setText(_translate("MainWindow", "Submit"))
+        self.label.setText(_translate("MainWindow", "Photo Type:"))
+        self.label_2.setText(_translate("MainWindow", "Photos Number:"))
         self.UpdateAlbum.setItemText(0, _translate("MainWindow", "False"))
         self.UpdateAlbum.setItemText(1, _translate("MainWindow", "True"))
-        self.label_3.setText(_translate("MainWindow", "Update Album"))
+        self.label_3.setText(_translate("MainWindow", "Update Album:"))
         self.PhotoNumber.setItemText(0, _translate("MainWindow", "1"))
         self.PhotoNumber.setItemText(1, _translate("MainWindow", "2"))
         self.PhotoNumber.setItemText(2, _translate("MainWindow", "3"))
@@ -252,34 +196,11 @@ class Ui_MainWindow(object):
         self.PhotoNumber.setItemText(9, _translate("MainWindow", "10"))
         self.Tittle.setText(_translate("MainWindow", "Google Photo Game"))
         self.label_5.setText(_translate("MainWindow", "Made by: Mam Ruoc"))
-        self.PlayOneLabel.setText(_translate("MainWindow", "NameOne"))
-        self.PhotoDateLabel.setText(_translate("MainWindow", "Photo Date:"))
-        self.label_4.setText(_translate("MainWindow", "Player One Name"))
-        self.label_6.setText(_translate("MainWindow", "Player Two Name"))
-        self.PlayerTwoLabel.setText(_translate("MainWindow", "NameTwo"))
-        self.CalculateButton.setText(_translate("MainWindow", "Calculate"))
-        self.PlayerOneDateGuess.setDisplayFormat(_translate("MainWindow", "yy/mm/dd"))
-        self.PlayerTwoDateGuess.setDisplayFormat(_translate("MainWindow", "yy/mm/dd"))
+
+    def get_infolist(self):
+        print(self.infolist)
 
     def pressed(self):
-        MainWindow.resize(391, 340)
-        self.PlayOneLabel.show()
-        self.PlayerTwoLabel.show()
-        self.PlayerOneSpinBox.show()
-        self.PlayerTwoSpinBox.show()
-        self.PlayerOneDateGuess.show()
-        self.PlayerTwoDateGuess.show()
-        self.PhotoDateLabel.show()
-        self.PhotoDateList.show()
-        self.CalculateButton.show()
-
-        _translate = QtCore.QCoreApplication.translate
-        PlayerOneName = self.PlayerOneName.text()
-        PlayerTwoName = self.PlayerTwoName.text()
-        print(PlayerOneName,PlayerTwoName)
-        self.PlayOneLabel.setText(_translate("MainWindow",PlayerOneName))
-        self.PlayerTwoLabel.setText(_translate("MainWindow", PlayerTwoName))
-
         self._file_type = self.PhotoType.currentText()
         self._number_of_files = int(self.PhotoNumber.currentText())
 
@@ -289,7 +210,6 @@ class Ui_MainWindow(object):
             self._update_flag = bool("True")
         print(self._file_type, self._number_of_files, self._update_flag)
         self.photo_fetch(self._file_type, self._number_of_files, self._update_flag)
-        print(self._date_list)
 
 
     def photo_fetch(self, _file_type, _number_of_files, _update_flag):
@@ -317,15 +237,10 @@ class Ui_MainWindow(object):
 
         print(_file_type)
         df_media_items = df_media_items[df_media_items.mimeType.str.contains(_file_type)].reset_index()
-        photo_dates_list = []
+
         for x in range(_number_of_files):
             url = df_media_items.loc[x].productUrl
-            photo_dict = ast.literal_eval(df_media_items.loc[x].mediaMetadata)
-            photo_dates_list.append(photo_dict["creationTime"][2:10].replace("-","/"))
             self._driver.execute_script("window.open('" + url + "')")
-
-        self._date_list = photo_dates_list
-
 
 
     @property
