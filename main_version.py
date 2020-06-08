@@ -19,10 +19,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
 import ast
-from PyQt5 import QtCore, QtGui, QtWidgets
+from datetime import datetime
 
 pd.set_option('display.max_colwidth', 150)
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(client_secret_file, api_name, api_version, scopes, sep='-')
@@ -94,6 +95,8 @@ def update(album_name):
 
         nextPageToken = response.get('nextPageToken')
     return lst_medias
+
+
 class Ui_MainWindow(object):
     def __init__(self):
         self._file_type = "both"
@@ -102,6 +105,9 @@ class Ui_MainWindow(object):
         self._update_flag = False
         self._driver = initalLogin()
         self._date_list = []
+        self._playerOnePoint = 0
+        self._playerTwoPoint = 0
+        self._date_list_index = 0
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -161,13 +167,15 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
-        self.PlayerOneDateGuess = QtWidgets.QDateEdit(self.centralwidget)
+
+        self.PlayerOneDateGuess = QtWidgets.QDateTimeEdit(self.centralwidget)
         self.PlayerOneDateGuess.setGeometry(QtCore.QRect(20, 220, 111, 24))
         self.PlayerOneDateGuess.setObjectName("PlayerOneDateGuess")
-        self.PlayerTwoDateGuess = QtWidgets.QDateEdit(self.centralwidget)
+
+        self.PlayerTwoDateGuess = QtWidgets.QDateTimeEdit(self.centralwidget)
         self.PlayerTwoDateGuess.setGeometry(QtCore.QRect(150, 220, 111, 24))
         self.PlayerTwoDateGuess.setObjectName("PlayerTwoDateGuess")
-        self.PlayerTwoDateGuess.setDateTime(QtCore.QDateTime(QtCore.QDate(2000, 1, 1), QtCore.QTime(0, 0, 0)))
+
         self.PlayOneLabel = QtWidgets.QLabel(self.centralwidget)
         self.PlayOneLabel.setGeometry(QtCore.QRect(20, 190, 71, 21))
         self.PlayOneLabel.setObjectName("PlayOneLabel")
@@ -188,17 +196,26 @@ class Ui_MainWindow(object):
         self.PlayerTwoName = QtWidgets.QLineEdit(self.centralwidget)
         self.PlayerTwoName.setGeometry(QtCore.QRect(150, 140, 121, 21))
         self.PlayerTwoName.setText("")
+
+        self.PlayerOneScore = QtWidgets.QLineEdit(self.centralwidget)
+        self.PlayerOneScore.setGeometry(QtCore.QRect(90, 190, 41, 20))
+        self.PlayerOneScore.setText("")
+
+        self.PlayerTwoScore = QtWidgets.QLineEdit(self.centralwidget)
+        self.PlayerTwoScore.setGeometry(QtCore.QRect(220, 190, 41, 20))
+        self.PlayerTwoScore.setText("")
+
         self.PlayerTwoName.setAlignment(QtCore.Qt.AlignCenter)
         self.PlayerTwoName.setObjectName("PlayerTwoName")
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setGeometry(QtCore.QRect(160, 120, 111, 20))
         self.label_6.setObjectName("label_6")
-        self.PlayerOneSpinBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.PlayerOneSpinBox.setGeometry(QtCore.QRect(90, 190, 41, 20))
-        self.PlayerOneSpinBox.setObjectName("PlayerOneSpinBox")
-        self.PlayerTwoSpinBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.PlayerTwoSpinBox.setGeometry(QtCore.QRect(220, 190, 41, 20))
-        self.PlayerTwoSpinBox.setObjectName("PlayerTwoSpinBox")
+        # self.PlayerOneSpinBox = QtWidgets.QSpinBox(self.centralwidget)
+        # self.PlayerOneSpinBox.setGeometry(QtCore.QRect(90, 190, 41, 20))
+        # self.PlayerOneSpinBox.setObjectName("PlayerOneSpinBox")
+        # self.PlayerTwoSpinBox = QtWidgets.QSpinBox(self.centralwidget)
+        # self.PlayerTwoSpinBox.setGeometry(QtCore.QRect(220, 190, 41, 20))
+        # self.PlayerTwoSpinBox.setObjectName("PlayerTwoSpinBox")
         self.PlayerTwoLabel = QtWidgets.QLabel(self.centralwidget)
         self.PlayerTwoLabel.setGeometry(QtCore.QRect(150, 190, 71, 21))
         self.PlayerTwoLabel.setObjectName("PlayerTwoLabel")
@@ -216,15 +233,16 @@ class Ui_MainWindow(object):
 
         self.PlayOneLabel.hide()
         self.PlayerTwoLabel.hide()
-        self.PlayerOneSpinBox.hide()
-        self.PlayerTwoSpinBox.hide()
+        self.PlayerOneScore.hide()
+        self.PlayerTwoScore.hide()
         self.PlayerOneDateGuess.hide()
         self.PlayerTwoDateGuess.hide()
         self.PhotoDateLabel.hide()
         self.PhotoDateList.hide()
         self.CalculateButton.hide()
 
-        self.GenerateButton.clicked.connect(self.pressed)
+        self.GenerateButton.clicked.connect(self.gen_pressed)
+        self.CalculateButton.clicked.connect(self.cal_pressed)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -258,15 +276,15 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "Player Two Name"))
         self.PlayerTwoLabel.setText(_translate("MainWindow", "NameTwo"))
         self.CalculateButton.setText(_translate("MainWindow", "Calculate"))
-        self.PlayerOneDateGuess.setDisplayFormat(_translate("MainWindow", "yy/mm/dd"))
-        self.PlayerTwoDateGuess.setDisplayFormat(_translate("MainWindow", "yy/mm/dd"))
+        self.PlayerOneDateGuess.setDisplayFormat(_translate("MainWindow", "yyyy/mm/dd"))
+        self.PlayerTwoDateGuess.setDisplayFormat(_translate("MainWindow", "yyyy/mm/dd"))
 
-    def pressed(self):
+    def gen_pressed(self):
         MainWindow.resize(391, 340)
         self.PlayOneLabel.show()
         self.PlayerTwoLabel.show()
-        self.PlayerOneSpinBox.show()
-        self.PlayerTwoSpinBox.show()
+        self.PlayerOneScore.show()
+        self.PlayerTwoScore.show()
         self.PlayerOneDateGuess.show()
         self.PlayerTwoDateGuess.show()
         self.PhotoDateLabel.show()
@@ -276,8 +294,8 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         PlayerOneName = self.PlayerOneName.text()
         PlayerTwoName = self.PlayerTwoName.text()
-        print(PlayerOneName,PlayerTwoName)
-        self.PlayOneLabel.setText(_translate("MainWindow",PlayerOneName))
+        print(PlayerOneName, PlayerTwoName)
+        self.PlayOneLabel.setText(_translate("MainWindow", PlayerOneName))
         self.PlayerTwoLabel.setText(_translate("MainWindow", PlayerTwoName))
 
         self._file_type = self.PhotoType.currentText()
@@ -288,9 +306,39 @@ class Ui_MainWindow(object):
         else:
             self._update_flag = bool("True")
         print(self._file_type, self._number_of_files, self._update_flag)
-        self.photo_fetch(self._file_type, self._number_of_files, self._update_flag)
+
+        # append the exisiting list to a new generated list
+        self._date_list.extend(self.photo_fetch(self._file_type, self._number_of_files, self._update_flag))
         print(self._date_list)
 
+    def cal_pressed(self):
+        try:
+            date_list = [datetime.strptime(x, '%Y/%m/%d') for x in self._date_list]
+            try:
+                playerOneDate = datetime.strptime(self.PlayerOneDateGuess.text(), '%Y/%m/%d')
+                playerTwoDate = datetime.strptime(self.PlayerTwoDateGuess.text(), '%Y/%m/%d')
+                playerOneDelta = abs(date_list[self._date_list_index] - playerOneDate)
+                playerTwoDelta = abs(date_list[self._date_list_index] - playerTwoDate)
+
+                if playerOneDelta.days < playerTwoDelta.days:
+                    #self.PlayerTwoSpinBox.stepBy(1)
+                    self.PlayerOneScore.setText(str(self._playerOnePoint + 1))
+                    self._playerOnePoint += 1
+
+                else:
+                    self.PlayerTwoScore.setText(str(self._playerTwoPoint + 1))
+                    self._playerTwoPoint += 1
+                print(playerOneDelta, " ", playerTwoDelta)
+                _translate = QtCore.QCoreApplication.translate
+                self.PhotoDateList.addItem("")
+                self.PhotoDateList.setItemText(self._date_list_index,
+                                               _translate("MainWindow", self._date_list[self._date_list_index]))
+                self._date_list_index += 1
+                MainWindow.show()
+            except ValueError:
+                print("Please take a guess for the date")
+        except IndexError:
+            print("No more photos to play, click Generate for more!")
 
     def photo_fetch(self, _file_type, _number_of_files, _update_flag):
         """
@@ -321,12 +369,10 @@ class Ui_MainWindow(object):
         for x in range(_number_of_files):
             url = df_media_items.loc[x].productUrl
             photo_dict = ast.literal_eval(df_media_items.loc[x].mediaMetadata)
-            photo_dates_list.append(photo_dict["creationTime"][2:10].replace("-","/"))
+            photo_dates_list.append(photo_dict["creationTime"][:10].replace("-", "/"))
             self._driver.execute_script("window.open('" + url + "')")
 
-        self._date_list = photo_dates_list
-
-
+        return photo_dates_list
 
     @property
     def driver(self):
