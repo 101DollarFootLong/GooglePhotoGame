@@ -14,7 +14,7 @@ import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
-from credentials import password_decoder
+from resources.credentials import password_decoder
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
@@ -23,7 +23,6 @@ from datetime import datetime
 
 pd.set_option('display.max_colwidth', 150)
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(client_secret_file, api_name, api_version, scopes, sep='-')
@@ -34,8 +33,11 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(SCOPES)
 
     cred = None
-
-    pickle_file = f'token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
+    if getattr(sys, 'frozen', False):
+        pickle_path = os.path.join(sys._MEIPASS, f'token_{API_SERVICE_NAME}_{API_VERSION}.pickle')
+    else:
+        pickle_path = f'resources/token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
+    pickle_file = pickle_path
     # print(pickle_file)
 
     if os.path.exists(pickle_file):
@@ -68,7 +70,11 @@ def update(album_name):
     :param album_name:
     :return: A list with all the photos metadata
     """
-    CLIENT_SECRET_FILE = 'credentials.json'
+    if getattr(sys, 'frozen', False):
+        json_path = os.path.join(sys._MEIPASS, 'credentials.json')
+    else:
+        json_path = 'resources/credentials.json'
+    CLIENT_SECRET_FILE = json_path
     API_NAME = 'photoslibrary'
     API_VERSION = 'v1'
     SCOPES = ['https://www.googleapis.com/auth/photoslibrary']
@@ -354,12 +360,17 @@ class Ui_MainWindow(object):
         else:
             _file_type = _file_type.lower().strip("s")
 
+        if getattr(sys, 'frozen', False):
+            csv_path = os.path.join(sys._MEIPASS, "DienNa_photos_metadata.csv")
+        else:
+            csv_path = "resources/DienNa_photos_metadata.csv"
+
         if _update_flag:
             lst_medias = update(self._album_name)
             df_media_items = pd.DataFrame(lst_medias)
-            df_media_items.to_csv(f"DienNa_photos_metadata.csv")
+            df_media_items.to_csv(csv_path)
         else:
-            df_media_items = pd.read_csv('DienNa_photos_metadata.csv')
+            df_media_items = pd.read_csv(csv_path)
 
         df_media_items = df_media_items.sample(frac=1).reset_index(drop=True)
 
@@ -386,7 +397,11 @@ def initalLogin():
     """
     username, password = password_decoder()
     options = Options()
-    driver = webdriver.Chrome(executable_path="./chromedriver", chrome_options=options)
+    if getattr(sys, 'frozen', False):
+        chromedriver_path = os.path.join(sys._MEIPASS, "chromedriver")
+        driver = webdriver.Chrome(chromedriver_path)
+    else:
+        driver = webdriver.Chrome(executable_path="./resources/chromedriver", chrome_options=options)
     driver.get(
         "https://accounts.google.com/signin/v2/identifier?continue..&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
     inputElement = driver.find_element_by_xpath('//*[@id="identifierId"]')
