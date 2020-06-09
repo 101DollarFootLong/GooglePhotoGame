@@ -20,10 +20,10 @@ from selenium.webdriver.chrome.options import Options
 import pandas as pd
 import ast
 from datetime import datetime
-
-pd.set_option('display.max_colwidth', 150)
+import qdarkstyle
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+pd.set_option('display.max_colwidth', 150)
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(client_secret_file, api_name, api_version, scopes, sep='-')
     CLIENT_SECRET_FILE = client_secret_file
@@ -114,16 +114,19 @@ class Ui_MainWindow(object):
         self._playerOnePoint = 0
         self._playerTwoPoint = 0
         self._date_list_index = 0
+        self._tabs_to_delete = 1
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
+        MainWindow.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+        #MainWindow.setStyleSheet(open("style.qss", "r").read())
         MainWindow.resize(391, 222)
         MainWindow.setDocumentMode(False)
         MainWindow.setDockNestingEnabled(True)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.PhotoType = QtWidgets.QComboBox(self.centralwidget)
-        self.PhotoType.setGeometry(QtCore.QRect(20, 70, 91, 41))
+        self.PhotoType.setGeometry(QtCore.QRect(20, 80, 91, 31))
         self.PhotoType.setObjectName("PhotoType")
         self.PhotoType.addItem("")
         self.PhotoType.addItem("")
@@ -132,24 +135,24 @@ class Ui_MainWindow(object):
         self.GenerateButton.setGeometry(QtCore.QRect(280, 130, 91, 41))
         self.GenerateButton.setObjectName("GenerateButton")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(30, 60, 71, 21))
+        self.label.setGeometry(QtCore.QRect(15, 55, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(13)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(160, 60, 101, 20))
+        self.label_2.setGeometry(QtCore.QRect(155, 55, 101, 21))
         self.label_2.setObjectName("label_2")
         self.UpdateAlbum = QtWidgets.QComboBox(self.centralwidget)
-        self.UpdateAlbum.setGeometry(QtCore.QRect(280, 60, 91, 61))
+        self.UpdateAlbum.setGeometry(QtCore.QRect(280, 80, 91, 31))
         self.UpdateAlbum.setObjectName("UpdateAlbum")
         self.UpdateAlbum.addItem("")
         self.UpdateAlbum.addItem("")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(280, 60, 91, 16))
+        self.label_3.setGeometry(QtCore.QRect(275, 55, 91, 21))
         self.label_3.setObjectName("label_3")
         self.PhotoNumber = QtWidgets.QComboBox(self.centralwidget)
-        self.PhotoNumber.setGeometry(QtCore.QRect(160, 70, 91, 41))
+        self.PhotoNumber.setGeometry(QtCore.QRect(160, 80, 91, 31))
         self.PhotoNumber.setObjectName("PhotoNumber")
         self.PhotoNumber.addItem("")
         self.PhotoNumber.addItem("")
@@ -168,7 +171,7 @@ class Ui_MainWindow(object):
         self.Tittle.setFont(font)
         self.Tittle.setObjectName("Tittle")
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(150, 30, 91, 20))
+        self.label_5.setGeometry(QtCore.QRect(155, 30, 101, 20))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_5.setFont(font)
@@ -179,17 +182,17 @@ class Ui_MainWindow(object):
         self.PlayerOneDateGuess.setObjectName("PlayerOneDateGuess")
 
         self.PlayerTwoDateGuess = QtWidgets.QDateTimeEdit(self.centralwidget)
-        self.PlayerTwoDateGuess.setGeometry(QtCore.QRect(150, 220, 111, 24))
+        self.PlayerTwoDateGuess.setGeometry(QtCore.QRect(150, 220, 113, 24))
         self.PlayerTwoDateGuess.setObjectName("PlayerTwoDateGuess")
 
         self.PlayOneLabel = QtWidgets.QLabel(self.centralwidget)
         self.PlayOneLabel.setGeometry(QtCore.QRect(20, 190, 71, 21))
         self.PlayOneLabel.setObjectName("PlayOneLabel")
         self.PhotoDateList = QtWidgets.QComboBox(self.centralwidget)
-        self.PhotoDateList.setGeometry(QtCore.QRect(270, 220, 104, 26))
+        self.PhotoDateList.setGeometry(QtCore.QRect(270, 220, 113, 24))
         self.PhotoDateList.setObjectName("PhotoDateList")
         self.PhotoDateLabel = QtWidgets.QLabel(self.centralwidget)
-        self.PhotoDateLabel.setGeometry(QtCore.QRect(280, 190, 71, 21))
+        self.PhotoDateLabel.setGeometry(QtCore.QRect(280, 190, 81, 21))
         self.PhotoDateLabel.setObjectName("PhotoDateLabel")
         self.PlayerOneName = QtWidgets.QLineEdit(self.centralwidget)
         self.PlayerOneName.setGeometry(QtCore.QRect(20, 140, 121, 21))
@@ -382,6 +385,15 @@ class Ui_MainWindow(object):
             photo_dict = ast.literal_eval(df_media_items.loc[x].mediaMetadata)
             photo_dates_list.append(photo_dict["creationTime"][:10].replace("-", "/"))
             self._driver.execute_script("window.open('" + url + "')")
+
+        # Delete the previous n number of tabs
+        for x in range(self._tabs_to_delete):
+            self._driver.switch_to.window(window_name=self._driver.window_handles[0])
+            self._driver.close()
+            self._driver.switch_to.window(window_name=self._driver.window_handles[0])
+        # Switch to the first tab
+        self._driver.switch_to.window(window_name=self._driver.window_handles[-1])
+        self._tabs_to_delete = _number_of_files
 
         return photo_dates_list
 
